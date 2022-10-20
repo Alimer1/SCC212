@@ -4,4 +4,6 @@ public class Star extends Body
     {
         super(diameter,color,solarSystem);
     }
+
+    //THIS HAS LIKE NO REASON TO EXIST
 }

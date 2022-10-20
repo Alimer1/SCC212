@@ -1,4 +1,4 @@
-public class Satellite extends Body
+public class Satellite extends Orbiter
 {
     private Planet planet;
 

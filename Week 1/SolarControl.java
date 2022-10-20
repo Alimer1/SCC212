@@ -15,21 +15,21 @@ public class SolarControl
         star = new Star(70,"YELLOW",sol);
 
         planets = new Planet[9];
-        planets[0] = new Planet(12,"#B7BDB9",70,2,sol);
-        planets[1] = new Planet(14,"#D9973B",90,2,sol);
-        planets[2] = new Planet(16,"#49A7dE",110,2,sol);
-        planets[3] = new Planet(18,"#BA7300",130,2,sol);
-        planets[4] = new Planet(20,"#DBB67B",150,2,sol);
-        planets[5] = new Planet(30,"#DECAAB",210,2,sol);
-        planets[6] = new Planet(27,"#CFEEFF",230,2,sol);
-        planets[7] = new Planet(24,"#4AACE0",270,2,sol);
-        planets[8] = new Planet(5,"#858535",300,2,sol);
+        planets[0] = new Planet(12,"#B7BDB9",70,1,sol);
+        planets[1] = new Planet(14,"#D9973B",90,1,sol);
+        planets[2] = new Planet(16,"#49A7dE",110,1,sol);
+        planets[3] = new Planet(18,"#BA7300",130,1,sol);
+        planets[4] = new Planet(20,"#DBB67B",150,1,sol);
+        planets[5] = new Planet(30,"#DECAAB",210,1,sol);
+        planets[6] = new Planet(27,"#CFEEFF",260,1,sol);
+        planets[7] = new Planet(24,"#4AACE0",310,1,sol);
+        planets[8] = new Planet(5,"#858535",360,-1,sol);
 
         satellites = new Satellite[4];
         satellites[0] = new Satellite(6, "GRAY",15, 1,sol,planets[2]);
-        satellites[1] = new Satellite(6, "ORANGE",30, 1,sol,planets[5]);
-        satellites[2] = new Satellite(3, "ORANGE",38, 1,sol,planets[5]);
-        satellites[3] = new Satellite(5, "ORANGE",24, 1,sol,planets[6]);
+        satellites[1] = new Satellite(6, "ORANGE",30, -1,sol,planets[5]);
+        satellites[2] = new Satellite(3, "PINK",38, 1,sol,planets[5]);
+        satellites[3] = new Satellite(5, "CYAN",24, 1,sol,planets[6]);
     }
 
     private void draw()
@@ -47,7 +47,6 @@ public class SolarControl
 
     private void move()
     {
-        star.move();
         for(int i=0;i<planets.length;i++)
         {
             planets[i].move();
