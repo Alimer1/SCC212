@@ -1,8 +1,7 @@
 public class Planet extends Body
-
 {
-    public Planet(double diameter,String color,double distance,double velocity)
+    public Planet(double diameter,String color,double distance,double velocity,SolarSystem solarSystem)
     {
-        super(diameter,color,distance,velocity);
+        super(diameter,color,distance,velocity,solarSystem);
     }
 }
