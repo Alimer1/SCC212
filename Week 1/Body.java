@@ -8,9 +8,9 @@ public class Body
     private double velocity;
     private double angularVelocity;
 
-    protected SolarSystem solarSystem;
+    protected SolarSystem solarSystem;  //Solar System these bodies will be in
 
-    public Body(double diameter,String color,SolarSystem solarSystem)
+    public Body(double diameter,String color,SolarSystem solarSystem)   //Constructor for a star
     {
         this.diameter = diameter;
         this.color = color;

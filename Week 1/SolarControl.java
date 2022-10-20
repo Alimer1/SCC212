@@ -23,7 +23,7 @@ public class SolarControl
         planets[5] = new Planet(30,"#DECAAB",210,2,sol);
         planets[6] = new Planet(27,"#CFEEFF",240,2,sol);
         planets[7] = new Planet(24,"#4AACE0",270,2,sol);
-        planets[8] = new Planet(5,"#858585",300,2,sol);
+        planets[8] = new Planet(5,"#858535",300,2,sol);
 
         satellites = new Satellite[4];
         satellites[0] = new Satellite(6, "GRAY",15, 1,sol,planets[2]);
