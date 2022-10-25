@@ -1,4 +1,4 @@
-public class Satellite extends Orbiter
+public class Satellite extends SolarOrbiter
 {
     private Planet planet;
 
@@ -10,7 +10,6 @@ public class Satellite extends Orbiter
 
     public void draw()
     {
-        solarSystem.drawSolarObjectAbout(distance, angle, diameter, color, planet.getDistance(), planet.getAngle());
+        getSolarSystem().drawSolarObjectAbout(getDistance(), getAngle(), getDiameter(), getColor(), planet.getDistance(), planet.getAngle());
     }
-
 }

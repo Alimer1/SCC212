@@ -2,20 +2,18 @@ public class SolarDriver
 {
     public static void main(String[] args)
     {
-        int planetCount = 2;
-        int satelliteCount = 2;
 
-        switch(args.length)
+        SolarControl mainController;
+
+        if(args.length==0)
         {
-        case 1:
-            planetCount = Integer.parseInt(args[0]);
-            break;
-        case 2:
-            planetCount = Integer.parseInt(args[0]);
-            satelliteCount = Integer.parseInt(args[1]);
-            break;
+            mainController = new SolarControl();
         }
-        SolarControl mainController = new SolarControl(planetCount,satelliteCount);
+        else
+        {
+            mainController = new SolarControl(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+        }
+
         mainController.mainLoop();
     }
 }
