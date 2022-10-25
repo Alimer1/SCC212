@@ -12,8 +12,19 @@ public class SolarControl
     private final int screenHeight = 1440;
 
     //Randomizer Values
-    private final double maxVelocity = 2.0;
+    private final double maxVelocity = 3.0;
     private final double minVelocity = 1.0;
+
+    private final int starWeight        = 5;
+    private final int planetWeight      = 3;
+    private final int satelliteWeight   = 1; //Will occupy twice the value here since its orbit passes through the line twice
+
+    private final double starMax        = 5.0; //Must be lower than Min and weight
+    private final double starMin        = 4.0;
+    private final double planetMax      = 3.0; //Must be lower than Min and weight
+    private final double planetMin      = 0.8;
+    private final double satelliteMax   = 1.0; //Must be lower than Min and weight
+    private final double satelliteMin   = 0.2;
 
     public SolarControl()
     {
@@ -45,7 +56,7 @@ public class SolarControl
     public SolarControl(int planetCount,int satelliteCount)
     {
         sol = new SolarSystem(screenWidth,screenHeight);
-        solarBodies = randomPlanets(planetCount,satelliteCount);
+        solarBodies = randomSystem(planetCount,satelliteCount);
     }
 
     public void mainLoop()
@@ -70,7 +81,87 @@ public class SolarControl
         }
     }
 
-    private String randomColor()
+    private SolarBody[] randomSystem(int numOfPlanets,int numOfSatellites)
+    {
+        SolarBody[] solarBodies = new SolarBody[1+numOfPlanets+numOfSatellites];
+
+        double totalSpace = screenHeight/2;
+        int spaceCount = starWeight + (numOfPlanets*planetWeight) + (numOfSatellites*satelliteWeight*2);
+        System.out.println("Space Count Is: ["+spaceCount+"]");
+        double singleSpace = totalSpace/spaceCount;
+
+        int currentSpaceCount;
+        Planet lastPlanet;
+
+        /*
+        Star size will be between       3 - 2   spaces
+        Planet size will be between     2 - 0.5 spaces
+        Satellite size will be between  1*- 0.1 spaces
+        *Always lower or equal the planet size
+        */
+
+        solarBodies[0] = new Star(randomBetween(starMin*singleSpace,starMax*singleSpace)*2.0,randomColor(), sol); //First finding the size of the stars radius then *2
+        currentSpaceCount = starWeight;
+        lastPlanet = randomPlanet(singleSpace, currentSpaceCount);
+        solarBodies[1] = lastPlanet;
+        currentSpaceCount = currentSpaceCount+planetWeight;
+
+        int planetsLeft = numOfPlanets-1;
+        int satelliteLeft = numOfSatellites;
+        double planetChance;
+        
+        for(int i=2;i<solarBodies.length;i++)
+        {
+            planetChance = (double)planetsLeft/(double)(planetsLeft+satelliteLeft);
+            System.out.println("Chance for a planet is :"+planetChance);
+            if(Math.random()<planetChance)
+            { //Create Planet
+                lastPlanet = randomPlanet(singleSpace, currentSpaceCount);
+                solarBodies[i] = lastPlanet;
+                planetsLeft--;
+                currentSpaceCount=currentSpaceCount+planetWeight;
+                System.out.println("Created a Planet");
+            }
+            else
+            { //Create Satellite
+                lastPlanet.setDistance(lastPlanet.getDistance()+(singleSpace*((double)satelliteWeight)));
+                currentSpaceCount=currentSpaceCount+satelliteWeight;
+                solarBodies[i] = randomSatellite(singleSpace, currentSpaceCount, lastPlanet);
+                satelliteLeft--;
+                currentSpaceCount=currentSpaceCount+satelliteWeight;
+                System.out.println("Created a Satellite");
+            }
+        }
+
+        return solarBodies;
+    }
+
+    private Satellite randomSatellite(double space,int spaceCount,Planet planet)
+    {
+        double diameter = randomBetween(space*satelliteMin, space*satelliteMax);
+        if(diameter>=planet.getDiameter())
+        {
+            diameter = planet.getDiameter();
+        }
+        double extraSpace = (space*satelliteWeight)-diameter;
+        double bottomSpace = space*spaceCount;
+        double extraMovement = randomBetween(0, extraSpace);
+        bottomSpace = bottomSpace - planet.getDistance(); //Planet core to bottomSpace top distance
+        Satellite satellite = new Satellite(diameter, randomColor(),bottomSpace+(diameter/2)+extraMovement,negativeChance(0.1)*randomBetween(minVelocity,maxVelocity),sol,planet);
+        return satellite;
+    }
+
+    private Planet randomPlanet(double space,int spaceCount)
+    {
+        double diameter = randomBetween(space*planetMin, space*planetMax);
+        double extraSpace = (space*planetWeight)-diameter;
+        double bottomSpace = space*spaceCount;
+        double extraMovement = randomBetween(0, extraSpace);
+        Planet planet = new Planet(diameter, randomColor(),bottomSpace+(diameter/2)+extraMovement,negativeChance(0.1)*randomBetween(minVelocity,maxVelocity), sol);
+        return planet;
+    }
+
+    private static String randomColor()
     {
         String color;
         color = "#";
@@ -82,133 +173,18 @@ public class SolarControl
         return color;
     }
 
-    private double randomVelocity()
+    private static double randomBetween(double min,double max)
     {
-        double velocity;
-        velocity = minVelocity + ((maxVelocity-minVelocity)*Math.random());
-        if(Math.random()>0.1)
-        {
-            velocity = velocity*(-1);
-        }
-        return velocity;
+        double result = min + ((max-min)*Math.random());
+        return result;
     }
 
-    private SolarBody[] randomPlanets(int numOfPlanets,int numOfSatellites)
+    private static double negativeChance(double chance)
     {
-        SolarBody[] solarBodies = new SolarBody[1+numOfPlanets+numOfSatellites];
-
-        /**
-        So first we divide the heigh of the shortes distance from the center of the screen to the sides.
-        giving us the distance from the center to the closest edge.
-        we divide this region to the number of planets and +2(for the star in the middle)
-        so for a system with 4 planets we crate this.
-
-        -I---------I    Planet 4 Region
-        -I-------I      Planet 3 Region
-        -I-----I        Planet 2 Region
-        -I---I          Planet 1 Region
-        -I-I            Star Region
-        -I-I            Star Region
-
-        We than create a star with the size of minimum 1 maximum 2 regions.
-        This makes sure that the star is the biggest thing in the solar system.
-        Then we crate planets with minimum 1/10 of a region and maximum 1 regions.
-        This makes sure that planets can't be to small while making sure they fit their regions.
-        Then we calculate the empty space left in their region with their size.
-        Then we move them up and down that distance randomly.
-         
-        **/
-
-        int regions = 2 + numOfPlanets;
-        double totalArea = Math.min(screenHeight,screenWidth)/2;
-        double regionArea = totalArea/regions;
-
-        System.out.println("Region Area: "+regionArea);
-
-        double starArea = regionArea + (Math.random()*regionArea);
-        solarBodies[0] = new Star(starArea*2,randomColor(),sol);
-
-        for(int i = 0;i<numOfPlanets;i++)
+        if(Math.random()<chance)
         {
-            //Calculating Planet Area
-            double planetArea = (regionArea*(1.0/10.0))+(regionArea*(8.0/10.0)*Math.random()); //A planet can occupy 10% to 90% of the given region;
-
-            //Calculating Planet Color
-            String color = randomColor();
-
-            //Calculating Planet Distance From Star
-            int bottomRegion = 2+i;
-            double bottomRegionArea = bottomRegion*regionArea;
-            double extraSpace = regionArea-planetArea;
-            double distanceFromStar = bottomRegionArea + (planetArea/2) + (extraSpace*Math.random());
-
-            //Calculating Planet Velocity
-            double velocity = randomVelocity();
-
-            //Creating the Planet
-            solarBodies[1+i] = new Planet(planetArea, color, distanceFromStar, velocity, sol);
-
-            System.out.print("\nCreating Planet ["+i+"]\n");
-            System.out.println("Planet Area: "+planetArea);
-            System.out.println("Planet Color: "+color);
-            System.out.println("Distance From Star: "+distanceFromStar);
-            System.out.println("Planet Velocity: "+velocity);
+            return -1;
         }
-
-        for(int i = 0;i<numOfSatellites;i++)
-        {
-            //Calculating Satellite Area
-            int targetPlanetNumber = 1+((int)(numOfPlanets*Math.random()));
-            Planet targetPlanet = (Planet) solarBodies[targetPlanetNumber];
-            double topGap;
-            double bottomGap;
-            double minGap;
-
-            if(targetPlanetNumber==numOfPlanets)
-            {
-                topGap = totalArea-(targetPlanet.getDistance()+(targetPlanet.getDiameter()/2));
-            }
-            else
-            {
-                Planet topPlanet = (Planet) solarBodies[targetPlanetNumber+1];
-                topGap = (topPlanet.getDistance()-(topPlanet.getDiameter()/2))-(targetPlanet.getDistance()+(targetPlanet.getDiameter()/2));
-            }
-            if(targetPlanetNumber==1)
-            {
-                bottomGap = (targetPlanet.getDistance()-(targetPlanet.getDiameter()/2))-(solarBodies[0].getDiameter()/2);
-            }
-            else
-            {
-                Planet bottomPlanet = (Planet) solarBodies[targetPlanetNumber-1];
-                bottomGap = (targetPlanet.getDistance()-(targetPlanet.getDiameter()/2))-(bottomPlanet.getDistance()+(bottomPlanet.getDiameter()/2));
-            }
-            minGap = Math.min(topGap, bottomGap); //Area around this planet that is empty
-            double satelliteArea = (minGap*(1.0/10.0))+(minGap*(5.0/10.0)*Math.random()); //A satellite can occupy 10% to 60% of the given region;
-            if(satelliteArea>targetPlanet.getDiameter())
-            {
-                satelliteArea = targetPlanet.getDiameter();
-            }
-
-            //Calculating Satellite Color
-            String color = randomColor();
-
-            //Calculating Satellite Distance From Planet
-            double extraSpace = minGap-satelliteArea;
-            double distanceFromPlanet = (targetPlanet.getDiameter()/2)+(satelliteArea/2)+(extraSpace*(5.0/10.0))+(extraSpace*(5.0/10.0)*Math.random());
-
-            //Calculating Satellite Velocity
-            double velocity = randomVelocity();
-
-            //Creating the Satellite
-            solarBodies[1+numOfPlanets+i] = new Satellite(satelliteArea, color, distanceFromPlanet, velocity, sol,targetPlanet);
-
-            System.out.print("\nCreating Satellite ["+i+"] of Planet ["+(targetPlanetNumber-1)+"]\n");
-            System.out.println("Satellite Area: "+satelliteArea);
-            System.out.println("Satellite Color: "+color);
-            System.out.println("Distance From Planet: "+distanceFromPlanet);
-            System.out.println("Satellite Velocity: "+velocity);
-        }
-
-        return(solarBodies);
+        return 1;
     }
 }

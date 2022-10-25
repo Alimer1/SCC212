@@ -1,7 +1,7 @@
 public abstract class SolarOrbiter extends SolarBody
 {
     private double distance;
-    private double angle = Math.random()*360.0;
+    private double angle = 0.0;
 
     private double velocity;
     private double angularVelocity;
@@ -29,6 +29,11 @@ public abstract class SolarOrbiter extends SolarBody
     public double getDistance()
     {
         return(distance);
+    }
+
+    public void setDistance(double distance)
+    {
+        this.distance = distance;
     }
 
     public double getAngle()
