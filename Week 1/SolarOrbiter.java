@@ -1,7 +1,7 @@
 public abstract class SolarOrbiter extends SolarBody
 {
     private double distance;
-    private double angle = 0.0;
+    private double angle = Math.random()*360.0;
 
     private double velocity;
     private double angularVelocity;
