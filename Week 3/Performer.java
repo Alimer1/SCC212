@@ -6,9 +6,11 @@ public class Performer implements CollectionTest
     private int size;
     private int iterations;
 
+    private Person[] personPool;
+
     private LinkedList<Person> linkedList;
     private ArrayList<Person> arrayList;
-    private HashMap<Person,Person> hashMap;
+    private HashMap<Integer,Person> hashMap;
 
     public Performer()
     {
@@ -18,6 +20,11 @@ public class Performer implements CollectionTest
     public void setSize(int size)
     {
         this.size = size;
+        personPool = new Person[size];
+        for(int i=0;i<size;i++)
+        {
+            personPool[i] =  new Person("Human-"+i,i+18);
+        }
         System.out.println("Size was set to:"+size);
     }
 
@@ -43,8 +50,7 @@ public class Performer implements CollectionTest
             linkedList = new LinkedList<Person>();
             for(int j=0;j<size;j++)
             {
-                Person nextHuman = new Person("Human"+j, j+18);
-                linkedList.add(nextHuman);
+                linkedList.add(personPool[j]);
             }
         }
     }
@@ -56,8 +62,7 @@ public class Performer implements CollectionTest
             arrayList = new ArrayList<Person>();
             for(int j=0;j<size;j++)
             {
-                Person nextHuman = new Person("Human"+j, j+18);
-                arrayList.add(nextHuman);
+                arrayList.add(personPool[j]);
             }
         }
     }
@@ -66,43 +71,93 @@ public class Performer implements CollectionTest
     {
         for(int i=0;i<iterations;i++)
         {
-            hashMap = new HashMap<Person,Person>();
+            hashMap = new HashMap<Integer,Person>();
             for(int j=0;j<size;j++)
             {
-                Person nextHuman = new Person("Human"+j, j+18);
-                hashMap.put(nextHuman,nextHuman);
+                hashMap.put(personPool[j].hashCode(),personPool[j]);
             }
         }
     }
 
     private void liIndex()
     {
-
+        for(int i=0;i<iterations;i++)
+        {
+            Person subject = linkedList.get(size/2);
+            int subjectAge = subject.getAge();
+        }
     }
 
     private void arIndex()
     {
-
+        for(int i=0;i<iterations;i++)
+        {
+            Person subject = arrayList.get(size/2);
+            int subjectAge = subject.getAge();
+        }
     }
 
     private void haIndex()
     {
-
+        for(int i=0;i<iterations;i++)
+        {
+            Person subject = hashMap.get(personPool[size/2].hashCode());
+            int subjectAge = subject.getAge();
+        }
     }
 
     private void liSearch()
     {
-
+        for(int i=0;i<iterations;i++)
+        {
+            String targetName = personPool[size/2].getName();
+            int targetAge;
+            for(int j=0;j<size;j++)
+            {
+                if(linkedList.get(j).getName() == targetName)
+                {
+                    Person target = linkedList.get(j);
+                    targetAge = target.getAge();
+                    break;
+                }
+            }
+        }
     }
 
     private void arSearch()
     {
-
+        for(int i=0;i<iterations;i++)
+        {
+            String targetName = personPool[size/2].getName();
+            int targetAge;
+            for(int j=0;j<size;j++)
+            {
+                if(arrayList.get(j).getName() == targetName)
+                {
+                    Person target = arrayList.get(j);
+                    targetAge = target.getAge();
+                    break;
+                }
+            }
+        }
     }
 
     private void haSearch()
     {
-
+        for(int i=0;i<iterations;i++)
+        {
+            String targetName = personPool[size/2].getName();
+            int targetAge;
+            for(int j=0;j<size;j++)
+            {
+                if(hashMap.get(personPool[j].hashCode()).getName() == targetName)
+                {
+                    Person target = hashMap.get(personPool[j].hashCode());
+                    targetAge = target.getAge();
+                    break;
+                }
+            }
+        }
     }
 
 
