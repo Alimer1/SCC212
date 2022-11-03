@@ -8,11 +8,11 @@ public class SolarControl
     //1080p [1920x1080] 16:9
     //1440p [2560x1440] 16:9
     //2160p [3840x2160] 16:9
-    private final int screenWidth = 2560;
-    private final int screenHeight = 1440;
+    private final int screenWidth = 1920;
+    private final int screenHeight = 1080;
 
     //Randomizer Values
-    private final double maxVelocity = 3.0;
+    private final double maxVelocity = 2.0;
     private final double minVelocity = 1.0;
 
     private final int starWeight        = 5;
