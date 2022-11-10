@@ -6,6 +6,14 @@ public abstract class SolarOrbiter extends SolarBody
     private double velocity;
     private double angularVelocity;
 
+    /**
+     * 
+     * @param diameter
+     * @param color
+     * @param distance Distance from the orbited object.
+     * @param velocity
+     * @param solarSystem
+     */
     public SolarOrbiter(double diameter,String color,double distance,double velocity,SolarSystem solarSystem)
     {
         super(diameter,color,solarSystem);
@@ -13,12 +21,18 @@ public abstract class SolarOrbiter extends SolarBody
         this.velocity = velocity;
     }
 
+    /**
+     * Calls the move and call functions
+     */
     public void moveAndDraw()
     {
         move();
         draw();
     }
 
+    /**
+     * Moves the postion of the orbiter depending on its angular velocity
+     */
     public void move()
     {
         calculateAngularVelocity();
@@ -26,21 +40,36 @@ public abstract class SolarOrbiter extends SolarBody
         angle = angle % 360;
     }
 
+    /**
+     * Returns the distance.
+     * @return the distance.
+     */
     public double getDistance()
     {
         return(distance);
     }
 
+    /**
+     * Sets the distance.
+     * @param distance the distance.
+     */
     public void setDistance(double distance)
     {
         this.distance = distance;
     }
 
+    /**
+     * Returns the angle.
+     * @return the angle.
+     */
     public double getAngle()
     {
         return(angle);
     }
 
+    /**
+     * Calculates the angular velocity
+     */
     private void calculateAngularVelocity()
     {
         if(velocity == 0)

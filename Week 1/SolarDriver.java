@@ -2,18 +2,15 @@ public class SolarDriver
 {
     public static void main(String[] args)
     {
-
-        SolarControl mainController;
-
         if(args.length==0)
         {
-            mainController = new SolarControl();
+            SolarControl mainController = new SolarControl();
+            mainController.mainLoop(); //Starts the animation
         }
-        else
+        if(args.length==2)
         {
-            mainController = new SolarControl(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+            SolarControl mainController = new SolarControl(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+            mainController.mainLoop(); //Starts the animation
         }
-
-        mainController.mainLoop();
     }
 }
